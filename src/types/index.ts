@@ -101,14 +101,48 @@ export interface QuizResult {
 }
 
 // ============================================
+// Location Types
+// ============================================
+
+export type LocationId =
+  | 'uae'
+  | 'usa'
+  | 'uk'
+  | 'india'
+  | 'singapore'
+  | 'australia'
+  | 'canada'
+  | 'germany'
+  | 'saudi-arabia';
+
+export interface Location {
+  id: LocationId;
+  name: string;
+  flag: string;
+  currency: string;
+  currencySymbol: string;
+}
+
+export interface LocationInsights {
+  salaryRange: string;
+  demandLevel: 'high' | 'medium' | 'low' | 'growing';
+  topEmployers: string[];
+  jobMarketTrends: string;
+  localCertifications: string[];
+  visaInfo?: string;
+  tips: string[];
+}
+
+// ============================================
 // App State Types
 // ============================================
 
-export type AppScreen = 'landing' | 'quiz' | 'results';
+export type AppScreen = 'landing' | 'location' | 'quiz' | 'results';
 
 export interface AppState {
   currentScreen: AppScreen;
   currentQuestionIndex: number;
   answers: UserAnswer[];
   result: QuizResult | null;
+  selectedLocation: Location | null;
 }

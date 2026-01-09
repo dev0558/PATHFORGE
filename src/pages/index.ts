@@ -5,5 +5,6 @@
  */
 
 export * from './Landing';
+export * from './LocationSelector';
 export * from './Quiz';
 export * from './Results';

@@ -3,23 +3,28 @@
  *
  * Displays the quiz results including:
  * - Primary and secondary role matches
+ * - Location-specific insights (salary, demand, employers)
  * - Role details (overview, skills, tools, certifications)
  * - 90-day roadmap
  */
 
-import { useState } from 'react';
-import type { QuizResult } from '../types';
+import { useState, useEffect } from 'react';
+import type { QuizResult, Location, LocationInsights } from '../types';
 import { Roadmap } from '../components/Roadmap';
+import { getLocationInsights, isGeminiConfigured } from '../services/gemini';
 import styles from './Results.module.css';
 
 interface ResultsProps {
   result: QuizResult;
+  location: Location;
   onReset: () => void;
 }
 
-export function Results({ result, onReset }: ResultsProps) {
+export function Results({ result, location, onReset }: ResultsProps) {
   const [activeTab, setActiveTab] = useState<'primary' | 'secondary'>('primary');
   const [showRoadmap, setShowRoadmap] = useState(false);
+  const [locationInsights, setLocationInsights] = useState<LocationInsights | null>(null);
+  const [isLoadingInsights, setIsLoadingInsights] = useState(true);
 
   const activeRole =
     activeTab === 'primary' ? result.primaryRole : result.secondaryRole;
@@ -31,6 +36,17 @@ export function Results({ result, onReset }: ResultsProps) {
   const matchPercentage = primaryScore
     ? Math.min(Math.round((primaryScore.score / 18) * 100), 95)
     : 85;
+
+  // Fetch location insights when role or location changes
+  useEffect(() => {
+    async function fetchInsights() {
+      setIsLoadingInsights(true);
+      const insights = await getLocationInsights(activeRole, location);
+      setLocationInsights(insights);
+      setIsLoadingInsights(false);
+    }
+    fetchInsights();
+  }, [activeRole, location]);
 
   if (showRoadmap) {
     return (
@@ -64,6 +80,11 @@ export function Results({ result, onReset }: ResultsProps) {
           </svg>
           Start Over
         </button>
+        {/* Location Badge */}
+        <div className={styles.locationBadge}>
+          <span className={styles.locationFlag}>{location.flag}</span>
+          <span className={styles.locationName}>{location.name}</span>
+        </div>
       </header>
 
       {/* Results Content */}
@@ -91,7 +112,7 @@ export function Results({ result, onReset }: ResultsProps) {
           <h1 className={styles.heroTitle}>Your Best-Fit Career Path</h1>
           <p className={styles.heroSubtitle}>
             Based on your responses, we've identified the roles that align best
-            with your interests and skills.
+            with your interests and skills in <strong>{location.name}</strong>.
           </p>
         </section>
 
@@ -139,25 +160,73 @@ export function Results({ result, onReset }: ResultsProps) {
             </div>
           </div>
 
-          {/* Role Stats */}
+          {/* Location-Specific Stats */}
           <div className={styles.roleStats}>
             <div className={styles.stat}>
-              <span className={styles.statLabel}>Salary Range</span>
-              <span className={styles.statValue}>{activeRole.salaryRange}</span>
+              <span className={styles.statLabel}>
+                Salary in {location.name}
+              </span>
+              <span className={styles.statValue}>
+                {isLoadingInsights ? (
+                  <span className={styles.loading}>Loading...</span>
+                ) : (
+                  locationInsights?.salaryRange || activeRole.salaryRange
+                )}
+              </span>
             </div>
             <div className={styles.stat}>
-              <span className={styles.statLabel}>Demand</span>
+              <span className={styles.statLabel}>
+                Demand in {location.name}
+              </span>
               <span
-                className={`${styles.statValue} ${styles[activeRole.demandLevel]}`}
+                className={`${styles.statValue} ${
+                  styles[locationInsights?.demandLevel || activeRole.demandLevel]
+                }`}
               >
-                {activeRole.demandLevel === 'high'
-                  ? 'High Demand'
-                  : activeRole.demandLevel === 'growing'
-                  ? 'Growing'
-                  : 'Moderate'}
+                {isLoadingInsights ? (
+                  <span className={styles.loading}>Loading...</span>
+                ) : (
+                  <>
+                    {locationInsights?.demandLevel === 'high'
+                      ? 'High Demand'
+                      : locationInsights?.demandLevel === 'growing'
+                      ? 'Growing'
+                      : locationInsights?.demandLevel === 'low'
+                      ? 'Low'
+                      : 'Moderate'}
+                  </>
+                )}
               </span>
             </div>
           </div>
+
+          {/* Top Employers in Region */}
+          {locationInsights && (
+            <div className={styles.section}>
+              <h3 className={styles.sectionTitle}>
+                Top Employers in {location.name}
+              </h3>
+              <div className={styles.employerList}>
+                {locationInsights.topEmployers.map((employer, index) => (
+                  <span key={index} className={styles.employerTag}>
+                    {employer}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Job Market Trends */}
+          {locationInsights && (
+            <div className={styles.section}>
+              <h3 className={styles.sectionTitle}>
+                Job Market Trends
+              </h3>
+              <p className={styles.marketTrends}>
+                {locationInsights.jobMarketTrends}
+              </p>
+            </div>
+          )}
 
           {/* Overview */}
           <div className={styles.section}>
@@ -192,6 +261,37 @@ export function Results({ result, onReset }: ResultsProps) {
             </ul>
           </div>
 
+          {/* Local Tips */}
+          {locationInsights && locationInsights.tips.length > 0 && (
+            <div className={styles.section}>
+              <h3 className={styles.sectionTitle}>
+                Tips for {location.name}
+              </h3>
+              <ul className={styles.tipsList}>
+                {locationInsights.tips.map((tip, index) => (
+                  <li key={index} className={styles.tipItem}>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Skills */}
           <div className={styles.section}>
             <h3 className={styles.sectionTitle}>Key Skills to Develop</h3>
@@ -218,24 +318,88 @@ export function Results({ result, onReset }: ResultsProps) {
 
           {/* Certifications */}
           <div className={styles.section}>
-            <h3 className={styles.sectionTitle}>Recommended Certifications</h3>
+            <h3 className={styles.sectionTitle}>
+              Recommended Certifications
+              {locationInsights && (
+                <span className={styles.certSubtitle}>
+                  {' '}(valued in {location.name})
+                </span>
+              )}
+            </h3>
             <div className={styles.certList}>
-              {activeRole.certifications.map((cert, index) => (
-                <div key={index} className={styles.certCard}>
-                  <div className={styles.certInfo}>
-                    <span className={styles.certName}>{cert.name}</span>
-                    <span className={styles.certProvider}>{cert.provider}</span>
+              {(locationInsights?.localCertifications ||
+                activeRole.certifications.map(c => c.name)
+              ).slice(0, 4).map((certName, index) => {
+                const cert = activeRole.certifications.find(
+                  c => c.name === certName
+                );
+                return (
+                  <div key={index} className={styles.certCard}>
+                    <div className={styles.certInfo}>
+                      <span className={styles.certName}>{certName}</span>
+                      {cert && (
+                        <span className={styles.certProvider}>{cert.provider}</span>
+                      )}
+                    </div>
+                    {cert && (
+                      <span
+                        className={`${styles.certLevel} ${styles[cert.level]}`}
+                      >
+                        {cert.level}
+                      </span>
+                    )}
                   </div>
-                  <span
-                    className={`${styles.certLevel} ${styles[cert.level]}`}
-                  >
-                    {cert.level}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
+
+          {/* Visa Info */}
+          {locationInsights?.visaInfo && (
+            <div className={styles.section}>
+              <h3 className={styles.sectionTitle}>Work Permit Info</h3>
+              <p className={styles.visaInfo}>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                {locationInsights.visaInfo}
+              </p>
+            </div>
+          )}
         </div>
+
+        {/* Gemini Attribution */}
+        {isGeminiConfigured() && (
+          <div className={styles.aiAttribution}>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+            Location insights powered by Gemini AI
+          </div>
+        )}
 
         {/* CTA to Roadmap */}
         <div className={styles.roadmapCta}>
@@ -262,7 +426,7 @@ export function Results({ result, onReset }: ResultsProps) {
           </button>
           <p className={styles.ctaHint}>
             Get a step-by-step plan to start your journey as a{' '}
-            {activeRole.title}
+            {activeRole.title} in {location.name}
           </p>
         </div>
       </main>

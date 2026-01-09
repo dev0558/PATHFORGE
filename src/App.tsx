@@ -2,13 +2,13 @@
  * PathForge - Main App Component
  *
  * Root component that orchestrates the application flow:
- * Landing -> Quiz -> Results
+ * Landing -> Location Selection -> Quiz -> Results
  *
  * Uses the useQuiz hook for state management.
  */
 
 import { useQuiz } from './hooks';
-import { Landing, Quiz, Results } from './pages';
+import { Landing, LocationSelector, Quiz, Results } from './pages';
 import './styles/global.css';
 
 function App() {
@@ -20,7 +20,9 @@ function App() {
     progress,
     isFirstQuestion,
     result,
+    selectedLocation,
     startQuiz,
+    selectLocation,
     answerQuestion,
     goBack,
     resetQuiz,
@@ -30,6 +32,9 @@ function App() {
   switch (currentScreen) {
     case 'landing':
       return <Landing onStart={startQuiz} />;
+
+    case 'location':
+      return <LocationSelector onSelect={selectLocation} onBack={goBack} />;
 
     case 'quiz':
       if (!currentQuestion) {
@@ -48,10 +53,16 @@ function App() {
       );
 
     case 'results':
-      if (!result) {
+      if (!result || !selectedLocation) {
         return null;
       }
-      return <Results result={result} onReset={resetQuiz} />;
+      return (
+        <Results
+          result={result}
+          location={selectedLocation}
+          onReset={resetQuiz}
+        />
+      );
 
     default:
       return <Landing onStart={startQuiz} />;

@@ -3,10 +3,11 @@
  *
  * Custom hook for managing the quiz state and navigation.
  * Provides a clean API for components to interact with the quiz flow.
+ * Now includes location selection for regional insights.
  */
 
 import { useState, useCallback, useMemo } from 'react';
-import type { AppScreen, UserAnswer, QuizResult } from '../types';
+import type { AppScreen, UserAnswer, QuizResult, Location } from '../types';
 import { getAllQuestions } from '../data';
 import { generateResult } from '../engine';
 
@@ -16,6 +17,7 @@ interface UseQuizReturn {
   currentQuestionIndex: number;
   answers: UserAnswer[];
   result: QuizResult | null;
+  selectedLocation: Location | null;
 
   // Derived state
   currentQuestion: ReturnType<typeof getAllQuestions>[0] | null;
@@ -26,6 +28,7 @@ interface UseQuizReturn {
 
   // Actions
   startQuiz: () => void;
+  selectLocation: (location: Location) => void;
   answerQuestion: (answerId: string) => void;
   goBack: () => void;
   resetQuiz: () => void;
@@ -39,6 +42,7 @@ export function useQuiz(): UseQuizReturn {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<UserAnswer[]>([]);
   const [result, setResult] = useState<QuizResult | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
 
   // Derived state
   const currentQuestion = questions[currentQuestionIndex] || null;
@@ -47,12 +51,18 @@ export function useQuiz(): UseQuizReturn {
   const isFirstQuestion = currentQuestionIndex === 0;
   const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
 
-  // Start the quiz from landing page
+  // Start the quiz - now goes to location selection first
   const startQuiz = useCallback(() => {
-    setCurrentScreen('quiz');
+    setCurrentScreen('location');
     setCurrentQuestionIndex(0);
     setAnswers([]);
     setResult(null);
+  }, []);
+
+  // Select location and proceed to quiz
+  const selectLocation = useCallback((location: Location) => {
+    setSelectedLocation(location);
+    setCurrentScreen('quiz');
   }, []);
 
   // Handle answering a question and advance
@@ -99,9 +109,13 @@ export function useQuiz(): UseQuizReturn {
       // Remove the last answer
       setAnswers((prev) => prev.slice(0, -1));
     } else if (currentScreen === 'quiz' && isFirstQuestion) {
+      // Go back to location selection
+      setCurrentScreen('location');
+      setAnswers([]);
+    } else if (currentScreen === 'location') {
       // Go back to landing
       setCurrentScreen('landing');
-      setAnswers([]);
+      setSelectedLocation(null);
     }
   }, [currentScreen, isFirstQuestion, totalQuestions]);
 
@@ -111,6 +125,7 @@ export function useQuiz(): UseQuizReturn {
     setCurrentQuestionIndex(0);
     setAnswers([]);
     setResult(null);
+    setSelectedLocation(null);
   }, []);
 
   return {
@@ -119,6 +134,7 @@ export function useQuiz(): UseQuizReturn {
     currentQuestionIndex,
     answers,
     result,
+    selectedLocation,
 
     // Derived state
     currentQuestion,
@@ -129,6 +145,7 @@ export function useQuiz(): UseQuizReturn {
 
     // Actions
     startQuiz,
+    selectLocation,
     answerQuestion,
     goBack,
     resetQuiz,

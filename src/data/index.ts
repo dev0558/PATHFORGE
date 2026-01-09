@@ -6,3 +6,4 @@
 
 export * from './roles';
 export * from './questions';
+export * from './locations';
