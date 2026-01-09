@@ -1,0 +1,105 @@
+/**
+ * Loading Skeleton Styles
+ *
+ * Animated shimmer effect for loading states
+ */
+
+/* Base skeleton with shimmer animation */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-tertiary) 0%,
+    var(--color-border) 50%,
+    var(--color-bg-tertiary) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Variants */
+.text {
+  height: 16px;
+  width: 100%;
+  border-radius: var(--radius-sm);
+}
+
+.title {
+  height: 28px;
+  width: 200px;
+  border-radius: var(--radius-md);
+}
+
+.card {
+  height: 80px;
+  width: 100%;
+  border-radius: var(--radius-lg);
+}
+
+.badge {
+  height: 32px;
+  width: 80px;
+  border-radius: var(--radius-full);
+}
+
+.stat {
+  height: 60px;
+  width: 100%;
+  border-radius: var(--radius-lg);
+}
+
+/* Layout containers */
+.insightsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.statRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+}
+
+.roleCardContainer {
+  padding: var(--spacing-6);
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+}
+
+.roleHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-6);
+  gap: var(--spacing-4);
+}
+
+.roleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  flex: 1;
+}

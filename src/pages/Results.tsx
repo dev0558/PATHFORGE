@@ -10,7 +10,7 @@
 
 import { useState, useEffect } from 'react';
 import type { QuizResult, Location, LocationInsights } from '../types';
-import { Roadmap } from '../components/Roadmap';
+import { Roadmap, InsightsSkeleton, ShareButton } from '../components';
 import { getLocationInsights, isGeminiConfigured } from '../services/gemini';
 import styles from './Results.module.css';
 
@@ -80,10 +80,19 @@ export function Results({ result, location, onReset }: ResultsProps) {
           </svg>
           Start Over
         </button>
-        {/* Location Badge */}
-        <div className={styles.locationBadge}>
-          <span className={styles.locationFlag}>{location.flag}</span>
-          <span className={styles.locationName}>{location.name}</span>
+        <div className={styles.headerRight}>
+          {/* Location Badge */}
+          <div className={styles.locationBadge}>
+            <span className={styles.locationFlag}>{location.flag}</span>
+            <span className={styles.locationName}>{location.name}</span>
+          </div>
+          {/* Share Button */}
+          <ShareButton
+            role={activeRole}
+            location={location}
+            matchPercentage={activeTab === 'primary' ? matchPercentage : matchPercentage - 12}
+            insights={locationInsights}
+          />
         </div>
       </header>
 
@@ -201,7 +210,14 @@ export function Results({ result, location, onReset }: ResultsProps) {
           </div>
 
           {/* Top Employers in Region */}
-          {locationInsights && (
+          {isLoadingInsights ? (
+            <div className={styles.section}>
+              <h3 className={styles.sectionTitle}>
+                Top Employers in {location.name}
+              </h3>
+              <InsightsSkeleton />
+            </div>
+          ) : locationInsights && (
             <div className={styles.section}>
               <h3 className={styles.sectionTitle}>
                 Top Employers in {location.name}
@@ -217,7 +233,7 @@ export function Results({ result, location, onReset }: ResultsProps) {
           )}
 
           {/* Job Market Trends */}
-          {locationInsights && (
+          {!isLoadingInsights && locationInsights && (
             <div className={styles.section}>
               <h3 className={styles.sectionTitle}>
                 Job Market Trends

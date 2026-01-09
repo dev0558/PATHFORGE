@@ -19,6 +19,12 @@
   margin-bottom: var(--spacing-4);
 }
 
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
 /* Location Badge in Header */
 .locationBadge {
   display: flex;
@@ -131,7 +137,13 @@
   border-radius: var(--radius-xl);
   padding: var(--spacing-6);
   margin-bottom: var(--spacing-6);
-  animation: fadeIn 0.3s ease forwards;
+  animation: scaleIn 0.4s ease forwards;
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.roleCard:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
 
 .roleHeader {
@@ -167,6 +179,12 @@
   background: linear-gradient(135deg, var(--color-accent-primary), #4f46e5);
   border-radius: var(--radius-lg);
   flex-shrink: 0;
+  animation: glow 3s ease-in-out infinite;
+  transition: transform var(--transition-fast);
+}
+
+.matchBadge:hover {
+  transform: scale(1.05);
 }
 
 .matchPercent {
@@ -275,11 +293,24 @@
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+  cursor: default;
+}
+
+.tag:hover {
+  background: var(--color-bg-card);
+  color: var(--color-text-primary);
+  transform: translateY(-2px);
 }
 
 .toolTag {
   background: rgba(99, 102, 241, 0.1);
   color: var(--color-accent-secondary);
+}
+
+.toolTag:hover {
+  background: rgba(99, 102, 241, 0.2);
+  color: var(--color-accent-primary);
 }
 
 /* Certifications */
@@ -488,10 +519,51 @@
   }
 }
 
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+  }
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .results {
     padding: var(--spacing-3);
+  }
+
+  .header {
+    flex-direction: column;
+    gap: var(--spacing-3);
+    align-items: stretch;
+  }
+
+  .headerRight {
+    justify-content: space-between;
   }
 
   .roleCard {
@@ -508,5 +580,13 @@
 
   .roleToggle {
     grid-template-columns: 1fr;
+  }
+
+  .heroTitle {
+    font-size: var(--font-size-2xl);
+  }
+
+  .heroSubtitle {
+    font-size: var(--font-size-sm);
   }
 }
