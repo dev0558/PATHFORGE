@@ -1,0 +1,359 @@
+/**
+ * Roadmap Component Styles
+ */
+
+.roadmap {
+  min-height: 100vh;
+  padding: var(--spacing-4);
+  max-width: var(--max-width-content);
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-2) 0;
+  margin-bottom: var(--spacing-4);
+}
+
+/* Content */
+.content {
+  padding-bottom: var(--spacing-8);
+}
+
+/* Hero Section */
+.heroSection {
+  text-align: center;
+  margin-bottom: var(--spacing-10);
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2) var(--spacing-4);
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: var(--radius-full);
+  color: var(--color-accent-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-4);
+}
+
+.heroTitle {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-3);
+  line-height: var(--line-height-tight);
+}
+
+.roleHighlight {
+  color: var(--color-accent-primary);
+}
+
+.heroSubtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-10);
+}
+
+.timelineLine {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-success) 0%,
+    var(--color-warning) 50%,
+    var(--color-accent-primary) 100%
+  );
+  border-radius: var(--radius-full);
+}
+
+/* Month Card */
+.monthCard {
+  position: relative;
+  margin-left: 48px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  animation: slideInRight 0.5s ease forwards;
+  opacity: 0;
+}
+
+.monthCard:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.monthCard:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.monthCard:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.monthCard::before {
+  content: '';
+  position: absolute;
+  left: -28px;
+  top: 24px;
+  width: 16px;
+  height: 16px;
+  background: var(--color-bg-primary);
+  border: 3px solid var(--month-color, var(--color-accent-primary));
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.monthHeader {
+  padding: var(--spacing-5);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.monthLabel {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.monthTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin: var(--spacing-1) 0;
+  color: var(--color-text-primary);
+}
+
+.monthFocus {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.monthContent {
+  padding: var(--spacing-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-5);
+}
+
+/* Section Labels */
+.sectionLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-3);
+}
+
+.sectionLabel svg {
+  color: var(--color-accent-primary);
+}
+
+/* Task List */
+.taskList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.taskItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+}
+
+.taskCheckbox {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all var(--transition-fast);
+}
+
+.taskItem:hover .taskCheckbox {
+  border-color: var(--color-accent-primary);
+}
+
+/* Resource List */
+.resourceList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.resourceItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-accent-secondary);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: rgba(99, 102, 241, 0.05);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.resourceItem:hover {
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.resourceItem svg {
+  flex-shrink: 0;
+}
+
+/* Tips Section */
+.tipsSection {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+  margin-bottom: var(--spacing-8);
+}
+
+.tipsTitle {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-5);
+  text-align: center;
+}
+
+.tipsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.tip {
+  display: flex;
+  gap: var(--spacing-4);
+  align-items: flex-start;
+}
+
+.tipIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+}
+
+.tipIcon svg {
+  width: 20px;
+  height: 20px;
+  color: var(--color-accent-primary);
+}
+
+.tip h4 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-1);
+}
+
+.tip p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Final CTA */
+.finalCta {
+  text-align: center;
+  padding: var(--spacing-6);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-xl);
+}
+
+.finalCta p {
+  margin-bottom: var(--spacing-4);
+  color: var(--color-text-secondary);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .roadmap {
+    padding: var(--spacing-3);
+  }
+
+  .header {
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .timelineLine {
+    left: 12px;
+  }
+
+  .monthCard {
+    margin-left: 32px;
+  }
+
+  .monthCard::before {
+    left: -20px;
+    width: 12px;
+    height: 12px;
+  }
+
+  .heroTitle {
+    font-size: var(--font-size-2xl);
+  }
+
+  .tip {
+    flex-direction: column;
+    gap: var(--spacing-2);
+  }
+}
