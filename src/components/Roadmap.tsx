@@ -3,10 +3,100 @@
  *
  * Displays the 90-day learning roadmap for a career role.
  * Organized into 3 months with tasks and resources for each.
+ * Features:
+ * - Interactive checkboxes with localStorage persistence
+ * - Clickable resource links
+ * - Progress tracking
  */
 
+import { useState, useEffect, useCallback } from 'react';
 import type { CareerRole, RoadmapMonth } from '../types';
 import styles from './Roadmap.module.css';
+
+// Resource URL mapping for clickable links
+const RESOURCE_URLS: Record<string, string> = {
+  // Learning Platforms
+  'TryHackMe': 'https://tryhackme.com',
+  'TryHackMe - Complete Beginner Path': 'https://tryhackme.com/path/outline/beginner',
+  'TryHackMe - SOC Level 1': 'https://tryhackme.com/path/outline/soclevel1',
+  'TryHackMe - Offensive Pentesting': 'https://tryhackme.com/path/outline/pentesting',
+  'TryHackMe - Jr Penetration Tester': 'https://tryhackme.com/path/outline/jrpenetrationtester',
+  'Hack The Box': 'https://hackthebox.com',
+  'Hack The Box Academy': 'https://academy.hackthebox.com',
+  'Hack The Box Academy - Free Tier': 'https://academy.hackthebox.com',
+  'Hack The Box - Starting Point': 'https://app.hackthebox.com/starting-point',
+  'Blue Team Labs Online': 'https://blueteamlabs.online',
+  'CyberDefenders': 'https://cyberdefenders.org',
+  'CyberDefenders - Free Challenges': 'https://cyberdefenders.org/blueteam-ctf-challenges/',
+  'PortSwigger Web Security Academy': 'https://portswigger.net/web-security',
+  'LetsDefend': 'https://letsdefend.io',
+  'LetsDefend - SOC Analyst Path': 'https://letsdefend.io/training/soc-analyst-learning-path',
+  'PentesterLab': 'https://pentesterlab.com',
+
+  // Courses
+  'TCM Security': 'https://tcm-sec.com',
+  'TCM Security - Practical Ethical Hacking': 'https://academy.tcm-sec.com/p/practical-ethical-hacking-the-complete-course',
+  'Coursera - Google Cybersecurity Certificate': 'https://www.coursera.org/professional-certificates/google-cybersecurity',
+  'LinkedIn Learning': 'https://www.linkedin.com/learning',
+  'LinkedIn Learning - Interview Prep': 'https://www.linkedin.com/learning/topics/interview-preparation',
+  'Udemy - Network Security': 'https://www.udemy.com/courses/search/?q=network+security',
+  'Professor Messer - Security+': 'https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/sy0-701-comptia-security-plus-course/',
+
+  // Cloud & DevSecOps
+  'AWS Free Tier': 'https://aws.amazon.com/free',
+  'AWS Skill Builder': 'https://explore.skillbuilder.aws',
+  'AWS Security Specialty Learning Path': 'https://explore.skillbuilder.aws/learn/public/learning_plan/view/91/security-learning-plan',
+  'Azure Learn': 'https://learn.microsoft.com/en-us/training/azure/',
+  'Azure Security Path': 'https://learn.microsoft.com/en-us/training/paths/secure-your-cloud-data/',
+  'GCP Security': 'https://cloud.google.com/security',
+  'GCP Skills Boost': 'https://www.cloudskillsboost.google',
+  'KodeKloud - DevOps Learning Path': 'https://kodekloud.com/learning-path-devops/',
+  'Kubernetes Security': 'https://kubernetes.io/docs/concepts/security/',
+  'OWASP': 'https://owasp.org',
+  'OWASP Top 10': 'https://owasp.org/www-project-top-ten/',
+  'Snyk Learn': 'https://learn.snyk.io',
+
+  // YouTube Channels
+  'IppSec YouTube walkthroughs': 'https://www.youtube.com/c/ippsec',
+  'John Hammond YouTube': 'https://www.youtube.com/c/JohnHammond010',
+  'NetworkChuck': 'https://www.youtube.com/c/NetworkChuck',
+  'David Bombal': 'https://www.youtube.com/c/DavidBombal',
+
+  // Tools & Practice
+  'Splunk Boss of the SOC datasets': 'https://github.com/splunk/botsv1',
+  'Splunk Fundamentals': 'https://www.splunk.com/en_us/training/free-courses/splunk-fundamentals-1.html',
+  'VulnHub': 'https://www.vulnhub.com',
+  'DVWA': 'https://github.com/digininja/DVWA',
+  'Damn Vulnerable Web Application': 'https://github.com/digininja/DVWA',
+  'SANS Cyber Ranges': 'https://www.sans.org/cyber-ranges/',
+
+  // Communities & Resources
+  'GitHub - Awesome SOC resources': 'https://github.com/cyb3rxp/awesome-soc',
+  'GitHub - Awesome Penetration Testing': 'https://github.com/enaqx/awesome-pentest',
+  'GitHub - Awesome DevSecOps': 'https://github.com/devsecops/awesome-devsecops',
+  'GitHub - Awesome Cloud Security': 'https://github.com/4ndersonLin/awesome-cloud-security',
+  'Discord - InfoSec community servers': 'https://discord.gg/infosec',
+  'Reddit - r/cybersecurity': 'https://www.reddit.com/r/cybersecurity/',
+  'Reddit - r/netsec': 'https://www.reddit.com/r/netsec/',
+
+  // Certifications
+  'CompTIA': 'https://www.comptia.org',
+  'CompTIA Security+': 'https://www.comptia.org/certifications/security',
+  'CompTIA CySA+': 'https://www.comptia.org/certifications/cybersecurity-analyst',
+  'CompTIA Network+': 'https://www.comptia.org/certifications/network',
+  'eJPT': 'https://ine.com/learning/certifications/internal/elearnsecurity-junior-penetration-tester-cert',
+  'OSCP': 'https://www.offsec.com/courses/pen-200/',
+  'PNPT': 'https://certifications.tcm-sec.com/pnpt/',
+  'Cisco CCNA': 'https://www.cisco.com/c/en/us/training-events/training-certifications/certifications/associate/ccna.html',
+  'AWS Certified Security': 'https://aws.amazon.com/certification/certified-security-specialty/',
+  'Azure Security Engineer': 'https://learn.microsoft.com/en-us/certifications/azure-security-engineer/',
+
+  // Networking
+  'Cisco Packet Tracer': 'https://www.netacad.com/courses/packet-tracer',
+  'GNS3': 'https://www.gns3.com',
+  'Cisco Networking Academy': 'https://www.netacad.com',
+  'CBT Nuggets - Networking': 'https://www.cbtnuggets.com/it-training/networking',
+};
 
 interface RoadmapProps {
   role: CareerRole;
@@ -17,11 +107,57 @@ interface RoadmapProps {
 interface MonthCardProps {
   month: RoadmapMonth;
   monthNumber: number;
+  roleId: string;
+  completedTasks: Set<string>;
+  onTaskToggle: (taskId: string) => void;
 }
 
-function MonthCard({ month, monthNumber }: MonthCardProps) {
+function getResourceUrl(resource: string): string | null {
+  // Direct match
+  if (RESOURCE_URLS[resource]) {
+    return RESOURCE_URLS[resource];
+  }
+
+  // Partial match - find if resource contains a known key
+  for (const [key, url] of Object.entries(RESOURCE_URLS)) {
+    if (resource.toLowerCase().includes(key.toLowerCase())) {
+      return url;
+    }
+  }
+
+  // Try to match common patterns
+  const lowerResource = resource.toLowerCase();
+  if (lowerResource.includes('tryhackme')) return 'https://tryhackme.com';
+  if (lowerResource.includes('hack the box') || lowerResource.includes('htb')) return 'https://hackthebox.com';
+  if (lowerResource.includes('linkedin')) return 'https://www.linkedin.com/learning';
+  if (lowerResource.includes('aws')) return 'https://aws.amazon.com/training/';
+  if (lowerResource.includes('azure')) return 'https://learn.microsoft.com/en-us/training/azure/';
+  if (lowerResource.includes('gcp') || lowerResource.includes('google cloud')) return 'https://cloud.google.com/training';
+  if (lowerResource.includes('github')) return 'https://github.com';
+  if (lowerResource.includes('youtube')) return 'https://youtube.com';
+  if (lowerResource.includes('udemy')) return 'https://www.udemy.com';
+  if (lowerResource.includes('coursera')) return 'https://www.coursera.org';
+  if (lowerResource.includes('splunk')) return 'https://www.splunk.com/en_us/training.html';
+  if (lowerResource.includes('cisco')) return 'https://www.cisco.com/c/en/us/training-events/training-certifications.html';
+  if (lowerResource.includes('comptia')) return 'https://www.comptia.org';
+  if (lowerResource.includes('owasp')) return 'https://owasp.org';
+  if (lowerResource.includes('discord')) return 'https://discord.com';
+  if (lowerResource.includes('reddit')) return 'https://reddit.com';
+
+  return null;
+}
+
+function MonthCard({ month, monthNumber, roleId, completedTasks, onTaskToggle }: MonthCardProps) {
   const monthLabels = ['Month 1', 'Month 2', 'Month 3'];
   const monthColors = ['#22c55e', '#eab308', '#6366f1'];
+
+  const getTaskId = (taskIndex: number) => `${roleId}-month${monthNumber}-task${taskIndex}`;
+
+  const completedCount = month.tasks.filter((_, idx) =>
+    completedTasks.has(getTaskId(idx))
+  ).length;
+
+  const progress = Math.round((completedCount / month.tasks.length) * 100);
 
   return (
     <div
@@ -29,14 +165,30 @@ function MonthCard({ month, monthNumber }: MonthCardProps) {
       style={{ '--month-color': monthColors[monthNumber - 1] } as React.CSSProperties}
     >
       <div className={styles.monthHeader}>
-        <span
-          className={styles.monthLabel}
-          style={{ color: monthColors[monthNumber - 1] }}
-        >
-          {monthLabels[monthNumber - 1]}
-        </span>
+        <div className={styles.monthHeaderTop}>
+          <span
+            className={styles.monthLabel}
+            style={{ color: monthColors[monthNumber - 1] }}
+          >
+            {monthLabels[monthNumber - 1]}
+          </span>
+          <span className={styles.progressBadge}>
+            {completedCount}/{month.tasks.length} tasks
+          </span>
+        </div>
         <h3 className={styles.monthTitle}>{month.title}</h3>
         <p className={styles.monthFocus}>{month.focus}</p>
+
+        {/* Progress Bar */}
+        <div className={styles.progressBar}>
+          <div
+            className={styles.progressFill}
+            style={{
+              width: `${progress}%`,
+              backgroundColor: monthColors[monthNumber - 1]
+            }}
+          />
+        </div>
       </div>
 
       <div className={styles.monthContent}>
@@ -68,12 +220,43 @@ function MonthCard({ month, monthNumber }: MonthCardProps) {
             Tasks to Complete
           </h4>
           <ul className={styles.taskList}>
-            {month.tasks.map((task, index) => (
-              <li key={index} className={styles.taskItem}>
-                <span className={styles.taskCheckbox} />
-                {task}
-              </li>
-            ))}
+            {month.tasks.map((task, index) => {
+              const taskId = getTaskId(index);
+              const isCompleted = completedTasks.has(taskId);
+
+              return (
+                <li
+                  key={index}
+                  className={`${styles.taskItem} ${isCompleted ? styles.taskCompleted : ''}`}
+                  onClick={() => onTaskToggle(taskId)}
+                >
+                  <button
+                    className={`${styles.taskCheckbox} ${isCompleted ? styles.checked : ''}`}
+                    aria-label={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
+                    type="button"
+                  >
+                    {isCompleted && (
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M20 6L9 17L4 12"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                  <span className={styles.taskText}>{task}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -105,40 +288,86 @@ function MonthCard({ month, monthNumber }: MonthCardProps) {
             Recommended Resources
           </h4>
           <ul className={styles.resourceList}>
-            {month.resources.map((resource, index) => (
-              <li key={index} className={styles.resourceItem}>
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M18 13V19C18 19.5304 17.7893 20.0391 17.4142 20.4142C17.0391 20.7893 16.5304 21 16 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V8C3 7.46957 3.21071 6.96086 3.58579 6.58579C3.96086 6.21071 4.46957 6 5 6H11"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M15 3H21V9"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M10 14L21 3"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                {resource}
-              </li>
-            ))}
+            {month.resources.map((resource, index) => {
+              const url = getResourceUrl(resource);
+
+              return (
+                <li key={index} className={styles.resourceItem}>
+                  {url ? (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.resourceLink}
+                    >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M18 13V19C18 19.5304 17.7893 20.0391 17.4142 20.4142C17.0391 20.7893 16.5304 21 16 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V8C3 7.46957 3.21071 6.96086 3.58579 6.58579C3.96086 6.21071 4.46957 6 5 6H11"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M15 3H21V9"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M10 14L21 3"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      {resource}
+                    </a>
+                  ) : (
+                    <span className={styles.resourceText}>
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M18 13V19C18 19.5304 17.7893 20.0391 17.4142 20.4142C17.0391 20.7893 16.5304 21 16 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V8C3 7.46957 3.21071 6.96086 3.58579 6.58579C3.96086 6.21071 4.46957 6 5 6H11"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M15 3H21V9"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M10 14L21 3"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      {resource}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>
@@ -147,6 +376,49 @@ function MonthCard({ month, monthNumber }: MonthCardProps) {
 }
 
 export function Roadmap({ role, onBack, onReset }: RoadmapProps) {
+  const [completedTasks, setCompletedTasks] = useState<Set<string>>(new Set());
+
+  // Load completed tasks from localStorage on mount
+  useEffect(() => {
+    const storageKey = `pathforge-progress-${role.id}`;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setCompletedTasks(new Set(parsed));
+      } catch {
+        // Invalid data, start fresh
+      }
+    }
+  }, [role.id]);
+
+  // Save to localStorage when tasks change
+  const saveProgress = useCallback((tasks: Set<string>) => {
+    const storageKey = `pathforge-progress-${role.id}`;
+    localStorage.setItem(storageKey, JSON.stringify([...tasks]));
+  }, [role.id]);
+
+  const handleTaskToggle = useCallback((taskId: string) => {
+    setCompletedTasks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+      }
+      saveProgress(newSet);
+      return newSet;
+    });
+  }, [saveProgress]);
+
+  // Calculate total progress
+  const totalTasks =
+    role.roadmap.month1.tasks.length +
+    role.roadmap.month2.tasks.length +
+    role.roadmap.month3.tasks.length;
+  const completedCount = completedTasks.size;
+  const overallProgress = Math.round((completedCount / totalTasks) * 100);
+
   return (
     <div className={styles.roadmap}>
       {/* Header */}
@@ -169,9 +441,14 @@ export function Roadmap({ role, onBack, onReset }: RoadmapProps) {
           </svg>
           Back to Results
         </button>
-        <button className="btn btn-ghost" onClick={onReset}>
-          Start Over
-        </button>
+        <div className={styles.headerRight}>
+          <span className={styles.overallProgress}>
+            {overallProgress}% Complete
+          </span>
+          <button className="btn btn-ghost" onClick={onReset}>
+            Start Over
+          </button>
+        </div>
       </header>
 
       {/* Content */}
@@ -229,18 +506,49 @@ export function Roadmap({ role, onBack, onReset }: RoadmapProps) {
           </h1>
           <p className={styles.heroSubtitle}>
             Follow this structured plan to build the skills and knowledge needed
-            to start your career as a {role.title}. Focus on one month at a
-            time.
+            to start your career as a {role.title}. Click tasks to mark them complete.
           </p>
+
+          {/* Overall Progress Bar */}
+          <div className={styles.overallProgressBar}>
+            <div className={styles.overallProgressHeader}>
+              <span>Overall Progress</span>
+              <span>{completedCount}/{totalTasks} tasks completed</span>
+            </div>
+            <div className={styles.overallProgressTrack}>
+              <div
+                className={styles.overallProgressFill}
+                style={{ width: `${overallProgress}%` }}
+              />
+            </div>
+          </div>
         </section>
 
         {/* Timeline */}
         <section className={styles.timeline}>
           <div className={styles.timelineLine} />
 
-          <MonthCard month={role.roadmap.month1} monthNumber={1} />
-          <MonthCard month={role.roadmap.month2} monthNumber={2} />
-          <MonthCard month={role.roadmap.month3} monthNumber={3} />
+          <MonthCard
+            month={role.roadmap.month1}
+            monthNumber={1}
+            roleId={role.id}
+            completedTasks={completedTasks}
+            onTaskToggle={handleTaskToggle}
+          />
+          <MonthCard
+            month={role.roadmap.month2}
+            monthNumber={2}
+            roleId={role.id}
+            completedTasks={completedTasks}
+            onTaskToggle={handleTaskToggle}
+          />
+          <MonthCard
+            month={role.roadmap.month3}
+            monthNumber={3}
+            roleId={role.id}
+            completedTasks={completedTasks}
+            onTaskToggle={handleTaskToggle}
+          />
         </section>
 
         {/* Tips */}

@@ -19,6 +19,22 @@
   margin-bottom: var(--spacing-4);
 }
 
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.overallProgress {
+  padding: var(--spacing-2) var(--spacing-3);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
 /* Content */
 .content {
   padding-bottom: var(--spacing-8);
@@ -64,6 +80,36 @@
   line-height: var(--line-height-relaxed);
 }
 
+/* Overall Progress Bar */
+.overallProgressBar {
+  margin-top: var(--spacing-6);
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.overallProgressHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-2);
+}
+
+.overallProgressTrack {
+  height: 8px;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.overallProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-success), #4ade80);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
 /* Timeline */
 .timeline {
   position: relative;
@@ -98,6 +144,12 @@
   overflow: hidden;
   animation: slideInRight 0.5s ease forwards;
   opacity: 0;
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.monthCard:hover {
+  border-color: var(--color-border-hover);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .monthCard:nth-child(2) {
@@ -130,11 +182,26 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+.monthHeaderTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2);
+}
+
 .monthLabel {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.1em;
+}
+
+.progressBadge {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-tertiary);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-sm);
 }
 
 .monthTitle {
@@ -147,6 +214,21 @@
 .monthFocus {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-3);
+}
+
+/* Progress Bar */
+.progressBar {
+  height: 4px;
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
 }
 
 .monthContent {
@@ -186,20 +268,54 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-primary);
   line-height: var(--line-height-normal);
+  padding: var(--spacing-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.taskItem:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.taskCompleted {
+  opacity: 0.7;
+}
+
+.taskCompleted .taskText {
+  text-decoration: line-through;
+  color: var(--color-text-tertiary);
 }
 
 .taskCheckbox {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border: 2px solid var(--color-border);
   border-radius: var(--radius-sm);
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 1px;
   transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
 }
 
-.taskItem:hover .taskCheckbox {
+.taskCheckbox:hover {
   border-color: var(--color-accent-primary);
+}
+
+.taskCheckbox.checked {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: white;
+}
+
+.taskText {
+  flex: 1;
+  transition: all var(--transition-fast);
 }
 
 /* Resource List */
@@ -213,6 +329,11 @@
 .resourceItem {
   display: flex;
   align-items: center;
+}
+
+.resourceLink {
+  display: flex;
+  align-items: center;
   gap: var(--spacing-2);
   font-size: var(--font-size-sm);
   color: var(--color-accent-secondary);
@@ -220,14 +341,40 @@
   background: rgba(99, 102, 241, 0.05);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
+  text-decoration: none;
+  width: 100%;
 }
 
-.resourceItem:hover {
-  background: rgba(99, 102, 241, 0.1);
+.resourceLink:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--color-accent-primary);
+  transform: translateX(4px);
 }
 
-.resourceItem svg {
+.resourceLink svg {
   flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.resourceLink:hover svg {
+  opacity: 1;
+}
+
+.resourceText {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  padding: var(--spacing-2) var(--spacing-3);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  width: 100%;
+}
+
+.resourceText svg {
+  flex-shrink: 0;
+  opacity: 0.5;
 }
 
 /* Tips Section */
@@ -330,8 +477,13 @@
   }
 
   .header {
-    flex-wrap: wrap;
-    gap: var(--spacing-2);
+    flex-direction: column;
+    gap: var(--spacing-3);
+    align-items: stretch;
+  }
+
+  .headerRight {
+    justify-content: space-between;
   }
 
   .timelineLine {
@@ -355,5 +507,9 @@
   .tip {
     flex-direction: column;
     gap: var(--spacing-2);
+  }
+
+  .overallProgressBar {
+    max-width: 100%;
   }
 }
