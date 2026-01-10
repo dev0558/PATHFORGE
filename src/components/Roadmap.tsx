@@ -15,16 +15,23 @@ import styles from './Roadmap.module.css';
 
 // Resource URL mapping for clickable links
 const RESOURCE_URLS: Record<string, string> = {
-  // Learning Platforms
+  // Learning Platforms - TryHackMe
   'TryHackMe': 'https://tryhackme.com',
   'TryHackMe - Complete Beginner Path': 'https://tryhackme.com/path/outline/beginner',
+  'TryHackMe - Pre Security Path': 'https://tryhackme.com/path/outline/presecurity',
   'TryHackMe - SOC Level 1': 'https://tryhackme.com/path/outline/soclevel1',
   'TryHackMe - Offensive Pentesting': 'https://tryhackme.com/path/outline/pentesting',
   'TryHackMe - Jr Penetration Tester': 'https://tryhackme.com/path/outline/jrpenetrationtester',
+  'TryHackMe - Network Security module': 'https://tryhackme.com/module/network-security',
+  'TryHackMe - Security Engineer Path': 'https://tryhackme.com/path/outline/security-engineer-training',
+
+  // Learning Platforms - Hack The Box
   'Hack The Box': 'https://hackthebox.com',
   'Hack The Box Academy': 'https://academy.hackthebox.com',
   'Hack The Box Academy - Free Tier': 'https://academy.hackthebox.com',
   'Hack The Box - Starting Point': 'https://app.hackthebox.com/starting-point',
+
+  // Learning Platforms - Other
   'Blue Team Labs Online': 'https://blueteamlabs.online',
   'CyberDefenders': 'https://cyberdefenders.org',
   'CyberDefenders - Free Challenges': 'https://cyberdefenders.org/blueteam-ctf-challenges/',
@@ -32,8 +39,10 @@ const RESOURCE_URLS: Record<string, string> = {
   'LetsDefend': 'https://letsdefend.io',
   'LetsDefend - SOC Analyst Path': 'https://letsdefend.io/training/soc-analyst-learning-path',
   'PentesterLab': 'https://pentesterlab.com',
+  'Cybrary - SOC Analyst Path': 'https://www.cybrary.it/career-path/soc-analyst',
+  'HackerOne - Bug Bounty Practice': 'https://www.hackerone.com/hackers',
 
-  // Courses
+  // Courses & Training
   'TCM Security': 'https://tcm-sec.com',
   'TCM Security - Practical Ethical Hacking': 'https://academy.tcm-sec.com/p/practical-ethical-hacking-the-complete-course',
   'Coursera - Google Cybersecurity Certificate': 'https://www.coursera.org/professional-certificates/google-cybersecurity',
@@ -41,43 +50,87 @@ const RESOURCE_URLS: Record<string, string> = {
   'LinkedIn Learning - Interview Prep': 'https://www.linkedin.com/learning/topics/interview-preparation',
   'Udemy - Network Security': 'https://www.udemy.com/courses/search/?q=network+security',
   'Professor Messer - Security+': 'https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/sy0-701-comptia-security-plus-course/',
+  'Professor Messer Security+ Course (Free)': 'https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/sy0-701-comptia-security-plus-course/',
+  'Professor Messer Network+ Course': 'https://www.professormesser.com/network-plus/n10-008/n10-008-video/n10-008-training-course/',
+  'A Cloud Guru - Cloud Fundamentals': 'https://www.pluralsight.com/cloud-guru',
+  'Linux Academy / A Cloud Guru': 'https://www.pluralsight.com/cloud-guru',
+  'Boson practice exams': 'https://www.boson.com',
+  'Automate the Boring Stuff with Python': 'https://automatetheboringstuff.com',
 
-  // Cloud & DevSecOps
+  // Cloud & DevSecOps - AWS
   'AWS Free Tier': 'https://aws.amazon.com/free',
   'AWS Skill Builder': 'https://explore.skillbuilder.aws',
+  'AWS Skill Builder (Free)': 'https://explore.skillbuilder.aws',
   'AWS Security Specialty Learning Path': 'https://explore.skillbuilder.aws/learn/public/learning_plan/view/91/security-learning-plan',
+  'AWS Workshops (Free)': 'https://workshops.aws',
+  'AWS Security Documentation': 'https://docs.aws.amazon.com/security/',
+
+  // Cloud & DevSecOps - Azure
   'Azure Learn': 'https://learn.microsoft.com/en-us/training/azure/',
   'Azure Security Path': 'https://learn.microsoft.com/en-us/training/paths/secure-your-cloud-data/',
+
+  // Cloud & DevSecOps - GCP
   'GCP Security': 'https://cloud.google.com/security',
   'GCP Skills Boost': 'https://www.cloudskillsboost.google',
+
+  // DevSecOps & Kubernetes
   'KodeKloud - DevOps Learning Path': 'https://kodekloud.com/learning-path-devops/',
   'Kubernetes Security': 'https://kubernetes.io/docs/concepts/security/',
+  'Kubernetes Security Guide': 'https://kubernetes.io/docs/concepts/security/',
+  'Kubernetes Security documentation': 'https://kubernetes.io/docs/concepts/security/',
+  'Docker official tutorials': 'https://docs.docker.com/get-started/',
+  'Terraform tutorials by HashiCorp': 'https://developer.hashicorp.com/terraform/tutorials',
+  'GitHub Actions documentation': 'https://docs.github.com/en/actions',
   'OWASP': 'https://owasp.org',
   'OWASP Top 10': 'https://owasp.org/www-project-top-ten/',
+  'OWASP DevSecOps Guideline': 'https://owasp.org/www-project-devsecops-guideline/',
   'Snyk Learn': 'https://learn.snyk.io',
+  'Snyk Learn (Free)': 'https://learn.snyk.io',
+  'CloudSecDocs.com': 'https://cloudsecdocs.com',
 
   // YouTube Channels
   'IppSec YouTube walkthroughs': 'https://www.youtube.com/c/ippsec',
   'John Hammond YouTube': 'https://www.youtube.com/c/JohnHammond010',
   'NetworkChuck': 'https://www.youtube.com/c/NetworkChuck',
   'David Bombal': 'https://www.youtube.com/c/DavidBombal',
+  'Practical Networking YouTube channel': 'https://www.youtube.com/c/PracticalNetworking',
+  'TechWorld with Nana YouTube': 'https://www.youtube.com/c/TechWorldwithNana',
 
   // Tools & Practice
   'Splunk Boss of the SOC datasets': 'https://github.com/splunk/botsv1',
   'Splunk Fundamentals': 'https://www.splunk.com/en_us/training/free-courses/splunk-fundamentals-1.html',
+  'Security Onion documentation': 'https://docs.securityonion.net',
+  'Elastic SIEM tutorials': 'https://www.elastic.co/security',
   'VulnHub': 'https://www.vulnhub.com',
   'DVWA': 'https://github.com/digininja/DVWA',
   'Damn Vulnerable Web Application': 'https://github.com/digininja/DVWA',
   'SANS Cyber Ranges': 'https://www.sans.org/cyber-ranges/',
+  'SANS Reading Room papers': 'https://www.sans.org/white-papers/',
+  'Palo Alto free training': 'https://www.paloaltonetworks.com/services/education/digital-learning',
+  'pfSense documentation': 'https://docs.netgate.com/pfsense/en/latest/',
 
-  // Communities & Resources
+  // Communities & Resources - GitHub
   'GitHub - Awesome SOC resources': 'https://github.com/cyb3rxp/awesome-soc',
   'GitHub - Awesome Penetration Testing': 'https://github.com/enaqx/awesome-pentest',
   'GitHub - Awesome DevSecOps': 'https://github.com/devsecops/awesome-devsecops',
   'GitHub - Awesome Cloud Security': 'https://github.com/4ndersonLin/awesome-cloud-security',
+  'GitHub - DevSecOps resources': 'https://github.com/devsecops/awesome-devsecops',
+  'GitHub - Cloud Security Projects': 'https://github.com/4ndersonLin/awesome-cloud-security',
+  'GitHub - Security Tools repos': 'https://github.com/sbilly/awesome-security',
+  'GitHub - Write-ups and tools': 'https://github.com/Hack-with-Github/Awesome-Hacking',
+
+  // Communities - Discord, Reddit, LinkedIn
   'Discord - InfoSec community servers': 'https://discord.gg/infosec',
+  'InfoSec community Discord servers': 'https://discord.gg/infosec',
+  'Network Security Discord servers': 'https://discord.gg/networking',
+  'DevSecOps community forums': 'https://community.devsecops.org',
   'Reddit - r/cybersecurity': 'https://www.reddit.com/r/cybersecurity/',
   'Reddit - r/netsec': 'https://www.reddit.com/r/netsec/',
+  'Reddit r/networking community': 'https://www.reddit.com/r/networking/',
+  'LinkedIn Cloud Security groups': 'https://www.linkedin.com/groups/4335469/',
+  'LinkedIn DevSecOps groups': 'https://www.linkedin.com/groups/6585254/',
+  'LinkedIn Security Engineering groups': 'https://www.linkedin.com/groups/36708/',
+  'Twitter/X - InfoSec community': 'https://twitter.com/search?q=%23infosec',
 
   // Certifications
   'CompTIA': 'https://www.comptia.org',
@@ -95,6 +148,7 @@ const RESOURCE_URLS: Record<string, string> = {
   'Cisco Packet Tracer': 'https://www.netacad.com/courses/packet-tracer',
   'GNS3': 'https://www.gns3.com',
   'Cisco Networking Academy': 'https://www.netacad.com',
+  'Cisco Networking Academy (Free)': 'https://www.netacad.com',
   'CBT Nuggets - Networking': 'https://www.cbtnuggets.com/it-training/networking',
 };
 
