@@ -150,6 +150,76 @@ const RESOURCE_URLS: Record<string, string> = {
   'Cisco Networking Academy': 'https://www.netacad.com',
   'Cisco Networking Academy (Free)': 'https://www.netacad.com',
   'CBT Nuggets - Networking': 'https://www.cbtnuggets.com/it-training/networking',
+
+  // Malware Analysis
+  'Practical Malware Analysis book': 'https://nostarch.com/malware',
+  'OpenSecurityTraining2 - Architecture': 'https://opensecuritytraining.info/IntroX86.html',
+  'Malware Unicorn RE101': 'https://malwareunicorn.org/workshops/re101.html',
+  'ANY.RUN - Interactive sandbox': 'https://any.run',
+  'MalwareBazaar samples': 'https://bazaar.abuse.ch',
+  'Malware Traffic Analysis exercises': 'https://www.malware-traffic-analysis.net',
+  'Flare-On Challenge archives': 'https://flare-on.com',
+  'VX-Underground samples': 'https://vx-underground.org',
+  'SANS DFIR Reading Room': 'https://www.sans.org/white-papers/?focus-area=digital-forensics',
+  'Ghidra': 'https://ghidra-sre.org',
+
+  // Threat Intelligence
+  'MITRE ATT&CK Training': 'https://attack.mitre.org/resources/training/',
+  'SANS Cyber Threat Intelligence Summit talks': 'https://www.sans.org/cyber-security-summit/',
+  'Recorded Future University': 'https://www.recordedfuture.com/university',
+  'APT Reports (Mandiant, CrowdStrike)': 'https://www.mandiant.com/resources/reports',
+  'OpenCTI platform': 'https://www.opencti.io',
+  'MISP Project tutorials': 'https://www.misp-project.org/documentation/',
+  'CTI League community': 'https://cti-league.com',
+  'Twitter/X - Threat Intel community': 'https://twitter.com/search?q=%23threatintel',
+  'LinkedIn Threat Intelligence groups': 'https://www.linkedin.com/groups/4573505/',
+  'Shodan': 'https://www.shodan.io',
+  'Maltego': 'https://www.maltego.com',
+
+  // Digital Forensics
+  'SANS DFIR Poster': 'https://www.sans.org/posters/',
+  '13Cubed YouTube channel': 'https://www.youtube.com/c/13Cubed',
+  'Digital Forensics with Kali Linux book': 'https://www.packtpub.com/product/digital-forensics-with-kali-linux',
+  'CyberDefenders DFIR challenges': 'https://cyberdefenders.org/blueteam-ctf-challenges/',
+  'DFIR.Training resources': 'https://www.dfir.training',
+  'AboutDFIR community': 'https://aboutdfir.com',
+  'SANS DFIR NetWars': 'https://www.sans.org/cyber-ranges/',
+  'Magnet Virtual Summit': 'https://www.magnetforensics.com/magnet-virtual-summit/',
+  'DFIR Discord community': 'https://discord.gg/digitalforensics',
+  'Autopsy': 'https://www.autopsy.com',
+  'Volatility': 'https://www.volatilityfoundation.org',
+
+  // GRC (Governance, Risk, Compliance)
+  'NIST Cybersecurity Framework': 'https://www.nist.gov/cyberframework',
+  'ISO 27001 overview courses': 'https://www.iso.org/isoiec-27001-information-security.html',
+  'ISACA resources and webinars': 'https://www.isaca.org/resources',
+  'SANS Security Policy Project': 'https://www.sans.org/information-security-policy/',
+  'CIS Controls documentation': 'https://www.cisecurity.org/controls',
+  'GRC community forums': 'https://www.isaca.org/resources/isaca-community',
+  'ISACA certification prep': 'https://www.isaca.org/credentialing/certifications',
+  'LinkedIn GRC groups': 'https://www.linkedin.com/groups/2399939/',
+  'Local ISACA chapter events': 'https://www.isaca.org/membership/chapters',
+
+  // Application Security
+  'OWASP Cheat Sheet Series': 'https://cheatsheetseries.owasp.org',
+  'Secure Code Warrior': 'https://www.securecodewarrior.com',
+  'HackTheBox Web challenges': 'https://app.hackthebox.com/challenges',
+  'OWASP Testing Guide': 'https://owasp.org/www-project-web-security-testing-guide/',
+  'HackerOne / Bugcrowd': 'https://www.hackerone.com',
+  'OWASP local chapter meetings': 'https://owasp.org/chapters/',
+  'AppSec community conferences': 'https://owasp.org/events/',
+  'OWASP Juice Shop': 'https://owasp.org/www-project-juice-shop/',
+  'Semgrep': 'https://semgrep.dev',
+
+  // Incident Response
+  'NIST SP 800-61 IR Guide': 'https://csrc.nist.gov/publications/detail/sp/800-61/rev-2/final',
+  'CyberDefenders IR challenges': 'https://cyberdefenders.org/blueteam-ctf-challenges/',
+  'SANS IR case studies': 'https://www.sans.org/white-papers/',
+  'SANS NetWars': 'https://www.sans.org/cyber-ranges/',
+  'IR Discord communities': 'https://discord.gg/cybersecurity',
+  'DFIR Report case studies': 'https://thedfirreport.com',
+  'Velociraptor': 'https://docs.velociraptor.app',
+  'TheHive': 'https://thehive-project.org',
 };
 
 interface RoadmapProps {

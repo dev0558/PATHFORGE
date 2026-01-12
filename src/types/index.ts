@@ -15,7 +15,13 @@ export type RoleId =
   | 'cloud-security-engineer'
   | 'security-engineer'
   | 'network-engineer'
-  | 'devsecops-engineer';
+  | 'devsecops-engineer'
+  | 'malware-analyst'
+  | 'threat-intel-analyst'
+  | 'forensics-analyst'
+  | 'grc-analyst'
+  | 'appsec-engineer'
+  | 'incident-responder';
 
 export interface Certification {
   name: string;
